@@ -3,8 +3,9 @@ import path from 'path';
 import cors from 'cors';
 import { createServer as createViteServer } from 'vite';
 
+export const app = express();
+
 async function startServer() {
-  const app = express();
   const PORT = 3000;
 
   app.use(cors());

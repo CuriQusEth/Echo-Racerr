@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Cinzel } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
@@ -10,8 +10,14 @@ export const metadata: Metadata = {
   title: "Echo Racer | Web3 Cyber-Sonic Racer",
   description: "A high-speed futuristic racer where sound and echoes are your greatest weapon. Built on Base.",
   manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
   themeColor: "#050505",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

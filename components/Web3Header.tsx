@@ -6,7 +6,7 @@ import { Sun, Wallet } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { parseEther } from 'viem';
 import { encodeAttributionData, getAttributionData } from '@/lib/erc8021';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Web3Header() {
   const { address, isConnected } = useAccount();
@@ -14,6 +14,11 @@ export default function Web3Header() {
   const { disconnect } = useDisconnect();
   const { sendTransaction, isPending, isSuccess } = useSendTransaction();
   const [showTooltip, setShowTooltip] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleConnect = () => {
     if (isConnected) {
@@ -35,8 +40,10 @@ export default function Web3Header() {
     });
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 flex justify-between items-start pointer-events-auto">
+    <div className="w-full max-w-2xl mx-auto p-4 flex justify-between items-start">
       <div className="flex flex-col gap-2 relative z-50">
         <AnimatePresence>
           {isConnected && (

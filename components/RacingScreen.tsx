@@ -1,5 +1,5 @@
+'use client';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { motion } from 'motion/react';
 import { Volume2 } from 'lucide-react';
 
 interface RacingScreenProps {
@@ -8,8 +8,8 @@ interface RacingScreenProps {
 
 export default function RacingScreen({ onGameOver }: RacingScreenProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [distance, setDistance] = useState(0);
-  const [combo, setCombo] = useState(0);
+  const distanceRef = useRef<HTMLDivElement>(null);
+  const comboRef = useRef<HTMLDivElement>(null);
   const [echoes, setEchoes] = useState(3);
   const requestRef = useRef<number>(0);
   const isGameOver = useRef(false);
@@ -51,26 +51,38 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
     }
   }, [echoes]);
 
-  // Touch handling
+  // Unified Pointer handling for desktop + mobile
   const touchStart = useRef({ x: 0, y: 0 });
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  const handlePointerDown = (e: React.PointerEvent) => {
+    touchStart.current = { x: e.clientX, y: e.clientY };
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    const dx = touchEndX - touchStart.current.x;
-    const dy = touchEndY - touchStart.current.y;
+  const handlePointerUp = (e: React.PointerEvent) => {
+    const dx = e.clientX - touchStart.current.x;
+    const dy = e.clientY - touchStart.current.y;
 
     if (Math.abs(dy) > 50 && dy < 0) {
       // Swipe up
       jump();
     } else if (Math.abs(dx) < 20 && Math.abs(dy) < 20) {
-      // Tap
+      // Tap / Click
       fireEcho();
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        fireEcho();
+      } else if (e.code === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        jump();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [fireEcho, jump]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -118,7 +130,9 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
 
       const s = state.current;
       s.distance += s.speed * dt * 10;
-      setDistance(Math.floor(s.distance));
+      
+      // Update DOM directly to avoid React re-renders at 60fps
+      if (distanceRef.current) distanceRef.current.innerText = `${Math.floor(s.distance)}m`;
       
       // Speed up slightly over time
       s.speed += dt * 0.1;
@@ -149,11 +163,11 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
 
         // Simple AABB
         if (px < obs.x + obs.width && px + pw > obs.x &&
-            py < obs.y && py + ph > obs.y - obs.height) { // using bottom-left origin logic ish
+            py < obs.y && py + ph > obs.y - obs.height) { 
             
             if (obs.type === 'orb') {
               s.combo += 10;
-              setCombo(s.combo);
+              if (comboRef.current) comboRef.current.innerText = `${s.combo}`;
               setEchoes(prev => Math.min(prev + 1, 3));
               spawnParticles(obs.x, obs.y, '#ff00ff', 20);
               s.obstacles.splice(i, 1);
@@ -184,7 +198,7 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
                spawnParticles(obs.x, obs.y, '#00ffcc', 30);
                s.obstacles.splice(j, 1);
                s.combo += 25;
-               setCombo(s.combo);
+               if (comboRef.current) comboRef.current.innerText = `${s.combo}`;
             }
           }
         }
@@ -239,8 +253,10 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
 
       // Draw Echo Waves
       s.echoWaves.forEach(wave => {
-        ctx.strokeStyle = `rgba(0, 255, 204, ${wave.strength})`;
-        ctx.lineWidth = Math.max(1, 10 * wave.strength);
+        // Safe check for valid stroke style values
+        const alpha = Math.max(0, Math.min(1, wave.strength));
+        ctx.strokeStyle = `rgba(0, 255, 204, ${alpha})`;
+        ctx.lineWidth = Math.max(1, 10 * alpha);
         ctx.shadowColor = '#00ffcc';
         ctx.shadowBlur = 20;
         ctx.beginPath();
@@ -252,7 +268,7 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
       // Draw Particles
       s.particles.forEach(p => {
         ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life / p.maxLife;
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.maxLife));
         ctx.beginPath();
         ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
         ctx.fill();
@@ -292,9 +308,8 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
   return (
     <div 
       className="absolute inset-0 z-10 w-full h-full cursor-pointer touch-none"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={() => jump()}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
     >
       <canvas ref={canvasRef} className="block w-full h-full" />
       
@@ -302,12 +317,12 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
       <div className="absolute top-20 left-0 w-full px-4 flex justify-between items-start pointer-events-none">
         <div>
           <div className="text-[#00ffcc] font-mono text-sm tracking-wider">DISTANCE</div>
-          <div className="text-white font-['Cinzel'] text-3xl font-bold">{Math.floor(distance)}m</div>
+          <div ref={distanceRef} className="text-white font-['Cinzel'] text-3xl font-bold">0m</div>
         </div>
         
         <div className="text-right">
           <div className="text-[#ff00ff] font-mono text-sm tracking-wider">COMBO</div>
-          <div className="text-white font-['Cinzel'] text-3xl font-bold">{combo}</div>
+          <div ref={comboRef} className="text-white font-['Cinzel'] text-3xl font-bold">0</div>
         </div>
       </div>
 
@@ -327,7 +342,7 @@ export default function RacingScreen({ onGameOver }: RacingScreenProps) {
       </div>
 
       <div className="absolute bottom-32 left-0 w-full text-center text-[#444] font-mono text-xs pointer-events-none">
-        SWIPE UP TO JUMP • TAP TO ECHO
+        SWIPE UP / WA / ArrowUp TO JUMP • TAP / SPACE TO ECHO
       </div>
     </div>
   );

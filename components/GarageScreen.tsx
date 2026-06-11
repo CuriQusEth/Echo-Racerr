@@ -1,3 +1,4 @@
+'use client';
 import { motion } from 'motion/react';
 import { ArrowLeft, Wrench, Zap, Shield, Volume2 } from 'lucide-react';
 

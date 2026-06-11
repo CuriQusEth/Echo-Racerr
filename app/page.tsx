@@ -33,12 +33,12 @@ export default function App() {
   }, []);
 
   return (
-    <main className="relative w-full h-screen bg-black overflow-hidden flex flex-col items-center justify-center">
+    <main className="relative w-full h-screen bg-black flex flex-col items-center justify-center">
       <div className="absolute top-0 w-full z-50">
         <Web3Header />
       </div>
 
-      <div className="relative w-full h-full max-w-2xl mx-auto flex flex-col shadow-[0_0_50px_rgba(0,255,204,0.1)] border-x border-[#111]">
+      <div className="relative w-full h-full max-w-2xl mx-auto flex flex-col shadow-[0_0_50px_rgba(0,255,204,0.1)] border-x border-[#111] overflow-hidden">
         {gameState === 'title' && (
           <TitleScreen 
             onStartRace={handleStartRace} 

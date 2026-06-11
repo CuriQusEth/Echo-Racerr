@@ -1,3 +1,5 @@
+'use client';
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { RotateCcw, Home, Upload } from 'lucide-react';
 import { useAccount, useSendTransaction } from 'wagmi';
@@ -14,6 +16,11 @@ interface GameOverScreenProps {
 export default function GameOverScreen({ score, distance, onRetry, onHome }: GameOverScreenProps) {
   const { isConnected } = useAccount();
   const { sendTransaction, isPending, isSuccess } = useSendTransaction();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const recordOnChain = () => {
     if (!isConnected) return;
@@ -52,7 +59,7 @@ export default function GameOverScreen({ score, distance, onRetry, onHome }: Gam
         </div>
 
         <div className="flex flex-col gap-4 w-full">
-          {isConnected && (
+          {mounted && isConnected && (
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

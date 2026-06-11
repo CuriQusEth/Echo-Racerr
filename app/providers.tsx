@@ -1,12 +1,10 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { createConfig, http, WagmiProvider } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { injected } from 'wagmi/connectors';
-
-const queryClient = new QueryClient();
 
 export const config = createConfig({
   chains: [base],
@@ -17,6 +15,7 @@ export const config = createConfig({
 });
 
 export default function Providers({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

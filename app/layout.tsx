@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Echo Racer | Web3 Cyber-Sonic Racer",
   description: "A high-speed futuristic racer where sound and echoes are your greatest weapon. Built on Base.",
   manifest: "/manifest.json",
+  other: {
+    "talentapp:project_verification": "6c46c768c5820e2b33d96bff5d4c4999198d15fd02cd49d284b259d77f0f2fa6a7fd9a8610f4437f1588ffd39924827f35692589be1162b4c29f56402e459656",
+  },
 };
 
 export const viewport: Viewport = {

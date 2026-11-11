@@ -73,10 +73,9 @@ export default function TitleScreen({ onStartRace, onViewLeaderboard, onViewGara
 
       </div>
 
-      <div className="mb-8 text-center text-[#444] font-mono text-[10px] space-y-1 tracking-wider">
-        <p>ERC-8021 ATTRIBUTION READY</p>
-        <p>ERC-8004 TRUSTLESS AGENT SUPPORT</p>
-        <p>BASE MAINNET</p>
+      <div className="mb-8 text-center text-[#555] font-mono text-[10px] space-y-1 tracking-wider">
+        <p className="text-[#00ffcc]/80 font-bold">⚡ BASE DENIM MAINNET • 200MS CANONICAL BLOCKS</p>
+        <p>ERC-8021 ATTRIBUTION READY • ERC-8004 AGENT SUPPORT</p>
       </div>
     </div>
   );

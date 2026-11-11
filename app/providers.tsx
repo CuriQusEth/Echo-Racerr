@@ -10,8 +10,11 @@ export const config = createConfig({
   chains: [base],
   connectors: [injected()],
   transports: {
-    [base.id]: http(),
+    [base.id]: http('https://mainnet.base.org', {
+      batch: true,
+    }),
   },
+  pollingInterval: 200, // Base Denim 200ms canonical block interval
 });
 
 export default function Providers({ children }: { children: ReactNode }) {

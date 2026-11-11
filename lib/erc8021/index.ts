@@ -5,6 +5,9 @@ export function getAttributionData() {
   return {
     attribution: ATTRIBUTION_CODE,
     builder: BUILDER_CODE,
+    network: "base-mainnet",
+    chainId: 8453,
+    consensus: "denim-200ms",
     timestamp: Date.now(),
   };
 }

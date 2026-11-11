@@ -72,7 +72,7 @@ export default function GameOverScreen({ score, distance, onRetry, onHome }: Gam
               }`}
             >
               <Upload size={16} />
-              {isPending ? 'RECORDING...' : isSuccess ? 'ON-CHAIN RECORDED' : 'RECORD RUN ON-CHAIN'}
+              {isPending ? 'CONFIRMING ON BASE DENIM (200ms)...' : isSuccess ? 'CONFIRMED ON BASE MAINNET' : 'RECORD RUN ON BASE MAINNET'}
             </motion.button>
           )}
 

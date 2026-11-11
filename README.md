@@ -6,8 +6,9 @@ Echo Racer is a futuristic, high-speed endless runner where sound and echoes are
 
 ## 🛠 Tech Stack
 - Frontend: HTML5 Canvas, Tailwind CSS, Framer Motion
-- Blockchain: Wagmi, Viem, SIWE (Base Mainnet)
-- Protocol integrations: ERC-8021, ERC-8004
+- Blockchain: Wagmi, Viem (Base Denim Mainnet - Chain ID 8453, 200ms Canonical Blocks)
+- Protocol integrations: ERC-8021 Attribution, ERC-8004 Autonomous Agents
+- Consensus / Network: Base Denim (Retired Flashblocks in favor of 200ms native canonical blocks)
 - Agents API: Next.js App Router API Routes
 
 ## 🎮 Features
